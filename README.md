@@ -1,5 +1,8 @@
-<H4>Name:Akash Kumar M</H4>
-<H4>Register No:212223230010</H4>
+<H3>Name : Akash Kumar M</H3>
+<H3>Register No : 212223230010</H3>
+<H3>Experiment : 2</H3>
+<H3>Date : 17/11/2025</H3>
+<h1 align =center>Implementation of Exact Inference Method of Bayesian Network</h1>
 
 ## Aim:
 To implement the inference Burglary P(B| j,⥗m) in alarm problem by using Variable Elimination method in Python.
@@ -16,72 +19,50 @@ Step 7: Print the results.<br>
 
 ## Program :
 ```
-# Importing Library
 from pgmpy.models import BayesianNetwork
-from pgmpy.inference import VariableElimination
-# Defining network structure
-
-alarm_model = BayesianNetwork(
-    [
-        ("Burglary", "Alarm"),
-        ("Earthquake", "Alarm"),
-        ("Alarm", "JohnCalls"),
-        ("Alarm", "MaryCalls"),
-    ]
-)
-
-# Defining the parameters using CPT
 from pgmpy.factors.discrete import TabularCPD
+from pgmpy.inference import VariableElimination
 
-cpd_burglary = TabularCPD(
-    variable="Burglary", variable_card=2, values=[[0.999], [0.001]]
-)
-cpd_earthquake = TabularCPD(
-    variable="Earthquake", variable_card=2, values=[[0.998], [0.002]]
-)
-cpd_alarm = TabularCPD(
-    variable="Alarm",
-    variable_card=2,
-    values=[[0.999, 0.71, 0.06, 0.05], [0.001, 0.29, 0.94, 0.95]],
-    evidence=["Burglary", "Earthquake"],
-    evidence_card=[2, 2],
-)
-cpd_johncalls = TabularCPD(
-    variable="JohnCalls",
-    variable_card=2,
-    values=[[0.95, 0.1], [0.05, 0.9]],
-    evidence=["Alarm"],
-    evidence_card=[2],
-)
-cpd_marycalls = TabularCPD(
-    variable="MaryCalls",
-    variable_card=2,
-    values=[[0.99, 0.3], [0.01, 0.7]],
-    evidence=["Alarm"],
-    evidence_card=[2],
-)
+network = BayesianNetwork([('Burglary', 'Alarm'),
+                           ('Earthquake', 'Alarm'),
+                           ('Alarm', 'JohnCalls'),
+                           ('Alarm', 'MaryCalls')])
 
-# Associating the parameters with the model structure
-alarm_model.add_cpds(
-    cpd_burglary, cpd_earthquake, cpd_alarm, cpd_johncalls, cpd_marycalls
-)
-alarm_model.check_model()
+cpd_burglary = TabularCPD(variable='Burglary', variable_card=2, values=[[0.999], [0.001]])
+cpd_earthquake = TabularCPD(variable='Earthquake', variable_card=2, values=[[0.998], [0.002]])
+cpd_alarm = TabularCPD(variable='Alarm', variable_card=2,
+                       values=[[0.999, 0.71, 0.06, 0.05],
+                               [0.001, 0.29, 0.94, 0.95]],
+                       evidence=['Burglary', 'Earthquake'],
+                       evidence_card=[2, 2])
+cpd_john_calls = TabularCPD(variable='JohnCalls', variable_card=2,
+                             values=[[0.95, 0.1],
+                                     [0.05, 0.9]],
+                             evidence=['Alarm'],
+                             evidence_card=[2])
+cpd_mary_calls = TabularCPD(variable='MaryCalls', variable_card=2,
+                             values=[[0.99, 0.01],
+                                     [0.01, 0.99]],
+                             evidence=['Alarm'],
+                             evidence_card=[2])
 
-inference=VariableElimination(alarm_model)
-evidence={"JohnCalls":1,"MaryCalls":0}
-query='Burglary'
-res=inference.query(variables=[query],evidence=evidence)
-print(res)
+network.add_cpds(cpd_burglary, cpd_earthquake, cpd_alarm, cpd_john_calls, cpd_mary_calls)
 
-evidence2={"JohnCalls":1,"MaryCalls":1}
-res2=inference.query(variables=[query],evidence=evidence2)
-print(res2)
+inference = VariableElimination(network)
+
+evidence = {'JohnCalls': 1, 'MaryCalls': 0}  # John called (1) and Mary didn't call (0) as evidence
+query_variable = 'Burglary'
+
+result = inference.query(variables=[query_variable], evidence=evidence)
+print(result)
+
 ```
 
 
+
 ## Output :
-<img src="https://github.com/user-attachments/assets/71450aae-2858-4227-be39-2c7fee1b8bd5" width=35%>
-<img src="https://github.com/user-attachments/assets/9cdbe886-bcfc-4ffb-b4c1-6dcd0ae0cec5" width=35%>
+![image](https://github.com/22002102/Ex2---AAI/assets/119091638/2fca15b1-bd26-4139-95df-5c759fcc4e3f)
+
 
 ## Result :
 Thus, Bayesian Inference was successfully determined using Variable Elimination Method
